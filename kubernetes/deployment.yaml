@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-flask-app-deployment
+spec:
+  replicas: 3  # Number of replicas (pods) to maintain
+  selector:
+    matchLabels:
+      app: my-flask-app  # Label selector for the pods
+  template:
+    metadata:
+      labels:
+        app: my-flask-app  # Labels to match the selector
+    spec:
+      containers:
+        - name: flask-app-container
+          image: your-registry/my-flask-app:latest  # Replace with your container image
+          ports:
+            - containerPort: 5000  # Port your Flask app is running on
+
