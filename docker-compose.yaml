@@ -1,0 +1,18 @@
+version: '3'
+services:
+  web:
+    # Replace 'your-app-name' with a suitable name for your app
+    container_name: your-app-name
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Replace '5000' with the port your Flask app is listening on
+    ports:
+      - "5000:5000"
+    # Set environment variables if needed
+    environment:
+      - FLASK_ENV=development  # Replace with 'production' if needed
+    # You can mount volumes if you need to access local files from the container
+    volumes:
+      - .:/app
+
