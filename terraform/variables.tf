@@ -1,24 +1,32 @@
+# Define variables for your Terraform project
+
 variable "region" {
-  description = "AWS region"
-  default     = "us-west-1"  # Change this to your desired region
+  description = "The AWS region where resources will be created."
+  type        = string
+  default     = "us-east-1"
 }
 
-variable "ami_id" {
-  description = "AMI ID for the instance"
-  default     = "ami-0c55b159cbfafe1f0"  # Change this to your desired AMI ID
+variable "instance_count" {
+  description = "Number of instances to create."
+  type        = number
+  default     = 2
 }
 
 variable "instance_type" {
-  description = "Instance type"
+  description = "Instance type for the EC2 instances."
+  type        = string
   default     = "t2.micro"
 }
 
-variable "security_group_ingress_port" {
-  description = "Ingress port for the security group"
-  default     = 80  # Change this to your desired port
+variable "subnet_ids" {
+  description = "List of subnet IDs for the instances."
+  type        = list(string)
+  default     = ["subnet-abc123", "subnet-def456"]
 }
 
-variable "security_group_cidr_blocks" {
-  description = "CIDR blocks for the security group"
-  default     = ["0.0.0.0/0"]  # Change this to restrict access as needed
+variable "security_group_ids" {
+  description = "List of security group IDs for the instances."
+  type        = list(string)
+  default     = ["sg-abc123", "sg-def456"]
 }
+
