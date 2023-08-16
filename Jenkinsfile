@@ -1,49 +1,57 @@
 pipeline {
     agent any
-
+    
     stages {
-        stage('Clone Repository') {
+        stage('Git Clone') {
             steps {
-                // Replace 'REPO_URL' with your Git repository URL
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'REPO_URL']]])
+                // Checkout the code from the repository
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
             }
         }
-
-        stage('Clean Up') {
+        
+        stage('Cleanup') {
             steps {
-                // Add cleanup steps if needed
-                sh 'rm -rf build/ dist/'
+                // You can perform any necessary cleanup here, like deleting old build artifacts
+                sh 'rm -rf venv'
+                sh 'rm -rf __pycache__'
             }
         }
-
+        
         stage('Build') {
             steps {
-                // Replace with your build commands
-                sh 'npm install'  // For example, if using Node.js
+                // Set up your virtual environment and install dependencies
+                sh 'python3 -m venv venv'
+                sh 'source venv/bin/activate'
+                sh 'pip install -r requirements.txt'
             }
         }
-
+        
         stage('Test') {
             steps {
-                // Replace with your test commands
-                sh 'npm test'  // For example, if using Node.js
+                // Run tests
+                sh 'python -m unittest discover tests'
             }
         }
-
+        
         stage('Deploy') {
             steps {
-                // Replace with your deployment commands
-                sh 'kubectl apply -f kubernetes/deployment.yaml'  // Example Kubernetes deployment
+                // Here you can define your deployment steps (e.g., deploying to a server)
+                // Replace the following line with actual deployment commands
+                sh 'echo "Deploying the app"'
             }
         }
     }
-
+    
     post {
+        always {
+            // Clean up your environment after the pipeline
+            sh 'deactivate'
+        }
         success {
-            echo 'Pipeline succeeded!'
+            echo 'CI/CD pipeline succeeded!'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'CI/CD pipeline failed!'
         }
     }
 }
