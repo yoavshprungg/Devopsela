@@ -1,18 +1,19 @@
 version: '3'
 services:
   web:
-    # Replace 'your-app-name' with a suitable name for your app
-    container_name: your-app-name
+    container_name: flask
     build:
       context: .
       dockerfile: Dockerfile
-    # Replace '5000' with the port your Flask app is listening on
     ports:
       - "5000:5000"
-    # Set environment variables if needed
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
     environment:
-      - FLASK_ENV=development  # Replace with 'production' if needed
-    # You can mount volumes if you need to access local files from the container
-    volumes:
-      - .:/app
-
+      MYSQL_ROOT_PASSWORD: mysecretpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: myuserpassword
+    ports:
+      - "3306:3306"‏
