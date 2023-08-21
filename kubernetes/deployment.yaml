@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-flask-app-deployment
+  name: dolphine-deployment
 spec:
-  replicas: 3  # Number of replicas (pods) to maintain
+  replicas: 5 
   selector:
     matchLabels:
-      app: my-flask-app  # Label selector for the pods
-  template:
+      app: dolphine-app 
+  template: 
     metadata:
       labels:
-        app: my-flask-app  # Labels to match the selector
+        app: dolphine-app
     spec:
       containers:
-        - name: flask-app-container
-          image: your-registry/my-flask-app:latest  # Replace with your container image
+        - name: dolphine-container
+          image: yoavshprung/today:0.1
           ports:
-            - containerPort: 5000  # Port your Flask app is running on
+          - containerPort: 5000  
 
