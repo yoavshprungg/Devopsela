@@ -1,5 +1,4 @@
 version: '3'
-
 services:
   web:
     build:
@@ -9,6 +8,6 @@ services:
       - "5000:5000"
 
   mysql:
-    image: arieluchka/test-yoav:0.1
+    image: yoavshprung/today:0.1
     ports:
-      - "5000:5000"‏
+	- "5000:5000"
