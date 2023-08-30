@@ -1,20 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dolphine-deployment
+  name: yoav-dolphin
 spec:
-  replicas: 5 
+  replicas: 3
   selector:
     matchLabels:
-      app: dolphine-app 
-  template: 
+      app: yoav-dolphin
+  template:
     metadata:
       labels:
-        app: dolphine-app
+        app: yoav-dolphin
     spec:
       containers:
-        - name: dolphine-container
-          image: yoavshprung/today:0.1
+        - name: web
+          image: yoavshprung/today:latest
           ports:
-          - containerPort: 5000  
+            - containerPort: 5000
+        - name: mysql
+          image: mysql:latest
 

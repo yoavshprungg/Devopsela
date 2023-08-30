@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: dolphine-app
+  name: yoav-dolphin-service
 spec:
   selector:
-    app: dolphine-app
+    app: yoav-dolphin
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
-  type: LoadBalancer
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
 
