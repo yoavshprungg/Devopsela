@@ -4,7 +4,7 @@ metadata:
   name: yoav-dolphin-service
 spec:
   selector:
-    app: yoav-dolphin
+    app: web
   ports:
     - protocol: TCP
       port: 5000
