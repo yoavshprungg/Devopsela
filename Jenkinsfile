@@ -22,7 +22,8 @@ pipeline {
             steps {
                 script {
 
-                    sh 'docker build -t yoavshprung/today:latest .'
+                    sudo docker build -t yoavshprung/today:latest .
+
                 }
             }
         }
