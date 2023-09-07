@@ -16,7 +16,7 @@ spec:
         - name: web
           image: yoavshprung/today:latest
           ports:
-            - containerPort: 80
+            - containerPort: 5000
 
 ---
 
