@@ -1,57 +1,48 @@
 pipeline {
     agent any
     
+    triggers {
+        pollSCM('*/5 * * * *') 
+    }
+
     stages {
-        stage('Git Clone') {
+        stage('Clone') {
             steps {
-                // Checkout the code from the repository
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
             }
         }
-        
-        stage('Cleanup') {
+
+        stage('Clean Workspace') {
             steps {
-                // You can perform any necessary cleanup here, like deleting old build artifacts
-                sh 'rm -rf venv'
-                sh 'rm -rf __pycache__'
+                deleteDir()
             }
         }
-        
+
         stage('Build') {
             steps {
-                // Set up your virtual environment and install dependencies
-                sh 'python3 -m venv venv'
-                sh 'source venv/bin/activate'
-                sh 'pip install -r requirements.txt'
+                script {
+
+                    sh 'docker build -t yoavshprung/today:latest .'
+                }
             }
         }
-        
+
         stage('Test') {
             steps {
-                // Run tests
-                sh 'python -m unittest discover tests'
+                script {
+
+                    sh 'docker run yoavshprung/today:latest ./run-tests.sh'
+                }
             }
         }
-        
+
         stage('Deploy') {
             steps {
-                // Here you can define your deployment steps (e.g., deploying to a server)
-                // Replace the following line with actual deployment commands
-                sh 'echo "Deploying the app"'
+                script {
+
+                    sh 'kubectl apply -f kubernetes-deployment.yaml'
+                }
             }
-        }
-    }
-    
-    post {
-        always {
-            // Clean up your environment after the pipeline
-            sh 'deactivate'
-        }
-        success {
-            echo 'CI/CD pipeline succeeded!'
-        }
-        failure {
-            echo 'CI/CD pipeline failed!'
         }
     }
 }

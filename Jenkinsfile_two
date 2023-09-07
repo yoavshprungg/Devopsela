@@ -1,0 +1,78 @@
+pipeline {
+    triggers {
+        cron('*/3 * * * *') // Trigger every 3 minutes
+    }
+
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'yoavshprung/today'
+        MYSQL_IMAGE = 'mysql:latest'
+        CLUSTER_NAME = 'lorenzo'
+        REGION = 'europe-west12'
+        GITHUB_REPO = 'https://github.com/yoavshprungg/Devopsela.git'
+        K8S_NAMESPACE = 'dolphine_kubernets'
+        WORKDIR = '/home/yoav/Devopsela/'
+    }
+
+    stages {
+        stage('Git Clone') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], userRemoteConfigs: [[url: env.GITHUB_REPO]]])
+            }
+        }
+
+        stage('Clean Up') {
+            steps {
+                sh 'rm -rf *'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh "docker build -t yoavshprung/today:latest ."
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'docker run -d --name myapp-test -p 8080:80 yoavshprung/today:latest'
+                sh 'sleep 10' // Wait for the application to start (adjust as needed)
+                sh 'curl -s http://localhost:8080 | grep "Welcome to My App"' || error('Application test failed')
+
+                sh 'docker stop myapp-test'
+                sh 'docker rm myapp-test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh "docker login -u yoavshprung -p YOAVYOAV88"
+                sh "docker push "
+
+                script {
+                    def imagePullSecret = 'docker-hub-secret'
+                    kubernetesDeploy(
+                        kubeconfigId: 'kubeconfig',
+                        configs: ['deployment.yaml', 'service.yaml'],
+                        namespace: yoav_dolphine,
+                        secretName: imagePullSecret,
+                        containers: [
+                            containerTemplate(
+                                name: 'web',
+                                image: "${yoavshprung/today:latest}",
+                                ttyEnabled: true
+                            ),
+                            containerTemplate(
+                                name: 'mysql',
+                                image: "${MYSQL_IMAGE}",
+                                ttyEnabled: true
+                            )
+                        ]
+                    )
+                }
+            }
+        }
+    }
+}
+
