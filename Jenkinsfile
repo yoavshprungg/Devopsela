@@ -16,12 +16,16 @@ pipeline {
         stage('Build') {
             steps {
                 dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
-                    sh '''
-                    docker login -u ${dockerHubCredentials} -p ${dockerHubCredentials}
-                    docker build -t yoavshprung/today:latest .
-                    docker push yoavshprung/today:latest
-                    docker logout
-                    '''
+                    script {
+                        withCredentials([usernamePassword(credentialsId: 'b02aac4f-a3b2-4c78-bcca-186675d3b9df', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                            sh """
+                            echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
+                            docker build -t yoavshprung/today:latest .
+                            docker push yoavshprung/today:latest
+                            docker logout
+                            """
+                        }
+                    }
                 }
             }
         }
