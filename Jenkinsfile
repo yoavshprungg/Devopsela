@@ -15,13 +15,14 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh '''
-                sudo cd /var/lib/jenkins/workspace/yoavyo/Devopsela
-                docker login -u ${dockerHubCredentials} -p ${dockerHubCredentials}
-                sudo docker build -t yoavshprung/today:latest .
-                sudo docker push yoavshprung/today:latest
-                docker logout
-                '''
+                dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
+                    sh '''
+                    docker login -u ${dockerHubCredentials} -p ${dockerHubCredentials}
+                    docker build -t yoavshprung/today:latest .
+                    docker push yoavshprung/today:latest
+                    docker logout
+                    '''
+                }
             }
         }
 
@@ -50,3 +51,4 @@ pipeline {
         }
     }
 }
+
