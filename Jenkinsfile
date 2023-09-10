@@ -25,6 +25,16 @@ pipeline {
                     env.DOCKER_IMAGE_TAG = dockerImageTag
                 }
             }
+            
+            post {
+                success {
+                    script {
+                        sh "docker login"
+                        
+                        sh "docker push ${env.DOCKER_IMAGE_TAG}"
+                    }
+                }
+            }
         }
 
         stage('Test') {
