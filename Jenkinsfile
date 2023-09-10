@@ -1,38 +1,27 @@
 pipeline {
-    agent {
-        docker {
-            image 'docker:dind' // Use the Docker-in-Docker image as the agent
-            args '-v /var/run/docker.sock:/var/run/docker.sock' // Mount the Docker socket
-        }
-    }
-
+    agent any
     stages {
         stage('Git Clone') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
             }
         }
-
         stage('Clean Up') {
             steps {
                 deleteDir()
             }
         }
-
-        stage('build') {
+        stage('Build') {
             steps {
                 script {
-
                     def dockerImageTag = 'yoavshprung/today:latest'
                     sh "docker pull ${dockerImageTag}"
                 }
             }
         }
-
         stage('Test') {
             steps {
                 script {
-
                     def dockerImageTag = 'yoavshprung/today:latest'
                     sh "docker run -d --name myapp-test -p 5000:5000 ${dockerImageTag}"
                     sleep 10
@@ -45,15 +34,12 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy') {
             steps {
                 script {
-
                     sh "kubectl apply -f deployment.yaml -f service.yaml -n dolphine_kubernetes"
                 }
             }
         }
     }
 }
-
