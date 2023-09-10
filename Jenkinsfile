@@ -6,11 +6,13 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
             }
         }
+        
         stage('Clean Up') {
             steps {
                 deleteDir()
             }
         }
+        
         stage('Build') {
             steps {
                 sh '''
@@ -23,6 +25,7 @@ pipeline {
                 }
             }
         }
+    
         stage('Test') {
             steps {
                 script {
@@ -38,6 +41,7 @@ pipeline {
                 }
             }
         }
+    
         stage('Deploy') {
             steps {
                 script {
