@@ -13,9 +13,11 @@ pipeline {
         }
         stage('Build') {
             steps {
-                script {
-                    def dockerImageTag = 'yoavshprung/today:latest'
-                    sh "docker pull ${dockerImageTag}"
+                dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
+                sh 'pwd'
+                sh 'docker build -t yoavshprung/today:latest .'
+                sh 'echo "Pushing to DockerHub"'
+                sh 'docker push yoavshprung/today:latest'
                 }
             }
         }
