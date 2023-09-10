@@ -41,8 +41,6 @@ jobs:
           curl -s http://localhost:8080 | grep "Welcome to My App" || exit 1
           docker stop myapp-test
           docker rm myapp-test
-        env:
-          DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
         working-directory: ${{ env.WORKDIR }}
 
       - name: Login to Docker Hub
@@ -51,14 +49,10 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         working-directory: ${{ env.WORKDIR }}
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
       - name: Push Docker Image
         run: |
           docker push $DOCKER_IMAGE:latest
-        env:
-          DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
         working-directory: ${{ env.WORKDIR }}
 
       - name: Deploy to Kubernetes
@@ -69,5 +63,3 @@ jobs:
           manifests: |
             deployment.yaml
             service.yaml
-        env:
-          K8S_NAMESPACE: ${{ env.K8S_NAMESPACE }}
