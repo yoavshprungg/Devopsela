@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   schedule:
-    - cron: '*/3 * * * *' # Trigger every 3 minutes
+    - cron: '*/3 * * * *' 
 
 jobs:
   build-and-deploy:
@@ -10,7 +10,6 @@ jobs:
 
     env:
       DOCKER_IMAGE: 'yoavshprung/today'
-      MYSQL_IMAGE: 'mysql:latest'
       CLUSTER_NAME: 'lorenzo'
       REGION: 'europe-west12'
       GITHUB_REPO: 'https://github.com/yoavshprungg/Devopsela.git'
