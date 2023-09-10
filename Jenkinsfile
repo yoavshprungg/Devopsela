@@ -22,7 +22,6 @@ pipeline {
                     
                     sh "docker build -t ${dockerImageTag} -f Dockerfile ."
                     
-                    // Set the docker image tag as an environment variable for later stages
                     env.DOCKER_IMAGE_TAG = dockerImageTag
                 }
             }
@@ -52,4 +51,3 @@ pipeline {
         }
     }
 }
-
