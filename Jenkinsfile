@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:dind' // Use the Docker-in-Docker image as the agent
+            args '-v /var/run/docker.sock:/var/run/docker.sock' // Mount the Docker socket
+        }
+    }
 
     stages {
         stage('Git Clone') {
@@ -14,10 +19,10 @@ pipeline {
             }
         }
 
-        stage('Pull Docker Image') {
+        stage('build') {
             steps {
                 script {
-                    // Pull the Docker image from Docker Hub
+
                     def dockerImageTag = 'yoavshprung/today:latest'
                     sh "docker pull ${dockerImageTag}"
                 }
@@ -27,7 +32,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Run your tests using the pulled Docker image
+
                     def dockerImageTag = 'yoavshprung/today:latest'
                     sh "docker run -d --name myapp-test -p 5000:5000 ${dockerImageTag}"
                     sleep 10
@@ -44,7 +49,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Perform the deployment (e.g., using kubectl)
+
                     sh "kubectl apply -f deployment.yaml -f service.yaml -n dolphine_kubernetes"
                 }
             }
