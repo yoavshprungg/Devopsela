@@ -1,29 +1,29 @@
 pipeline {
     agent any
-    
-    triggers {
-        pollSCM('*/5 * * * *') 
-    }
 
     stages {
-        stage('Clone') {
+        stage('Git Clone') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
             }
         }
 
-        stage('Clean Workspace') {
+        stage('Clean Up') {
             steps {
                 deleteDir()
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
                 script {
-
-                    sudo docker build -t yoavshprung/today:latest .
-
+                    def appVersion = env.BUILD_NUMBER ?: '1.0'
+                    def dockerImageTag = "webapp:${appVersion}"
+                    
+                    sh "docker build -t ${dockerImageTag} -f Dockerfile ."
+                    
+                    // Set the docker image tag as an environment variable for later stages
+                    env.DOCKER_IMAGE_TAG = dockerImageTag
                 }
             }
         }
@@ -31,8 +31,14 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-
-                    sh 'docker run yoavshprung/today:latest ./run-tests.sh'
+                    sh "docker run -d --name myapp-test -p 5000:5000 ${env.DOCKER_IMAGE_TAG}"
+                    sleep 10
+                    def responseCode = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://localhost:5000', returnStatus: true)
+                    if (responseCode != 200) {
+                        error("Application test failed with response code ${responseCode}")
+                    }
+                    sh "docker stop myapp-test"
+                    sh "docker rm myapp-test"
                 }
             }
         }
@@ -40,8 +46,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-
-                    sh 'kubectl apply -f kubernetes-deployment.yaml'
+                    sh "kubectl apply -f deployment.yaml -f service.yaml -n dolphine_kubernetes"
                 }
             }
         }
