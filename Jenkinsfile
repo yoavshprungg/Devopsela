@@ -6,26 +6,25 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
             }
         }
-        
+
         stage('Clean Up') {
             steps {
                 deleteDir()
             }
         }
-        
+
         stage('Build') {
             steps {
                 sh '''
-                cd /var/lib/jenkins/workspace/yoavyo/Devopsela' 
+                cd /var/lib/jenkins/workspace/yoavyo/Devopsela
                 docker login -u ${dockerHubCredentials} -p ${dockerHubCredentials}
                 sudo docker build -t yoavshprung/today:latest .
-                sudo docker push yoavshprung/today:latest 
+                sudo docker push yoavshprung/today:latest
                 docker logout
                 '''
-                }
             }
         }
-    
+
         stage('Test') {
             steps {
                 script {
@@ -41,7 +40,7 @@ pipeline {
                 }
             }
         }
-    
+
         stage('Deploy') {
             steps {
                 script {
@@ -50,3 +49,4 @@ pipeline {
             }
         }
     }
+}
