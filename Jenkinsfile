@@ -14,9 +14,10 @@ pipeline {
         stage('Build') {
             steps {
                 dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
+                sh "docker login -u ${dockerHubCredentials} -p ${dockerHubCredentials}"
                 sh 'sudo docker build -t yoavshprung/today:latest .'
-                sh 'echo "Pushing to DockerHub"'
-                sh 'sudo docker push yoavshprung/today:latest'
+                sh 'sudo docker push yoavshprung/today:latest' 
+                sh 'docker logout'
                 }
             }
         }
