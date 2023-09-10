@@ -1,0 +1,74 @@
+name: CI/CD
+
+on:
+  schedule:
+    - cron: '*/3 * * * *' # Trigger every 3 minutes
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_IMAGE: 'yoavshprung/today'
+      MYSQL_IMAGE: 'mysql:latest'
+      CLUSTER_NAME: 'lorenzo'
+      REGION: 'europe-west12'
+      GITHUB_REPO: 'https://github.com/yoavshprungg/Devopsela.git'
+      K8S_NAMESPACE: 'dolphine_kubernetes'
+      WORKDIR: '/home/yoav/Devopsela/'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          ref: 'master'
+
+      - name: Clean Up
+        run: |
+          rm -rf *
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Build Docker Image
+        run: |
+          docker build -t $DOCKER_IMAGE:latest .
+        env:
+          DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Test
+        run: |
+          docker run -d --name myapp-test -p 8080:80 $DOCKER_IMAGE:latest
+          sleep 10
+          curl -s http://localhost:8080 | grep "Welcome to My App" || exit 1
+          docker stop myapp-test
+          docker rm myapp-test
+        env:
+          DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Login to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_USERNAME }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        working-directory: ${{ env.WORKDIR }}
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+
+      - name: Push Docker Image
+        run: |
+          docker push $DOCKER_IMAGE:latest
+        env:
+          DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Deploy to Kubernetes
+        uses: azure/k8s-deploy@v1
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          namespace: ${{ env.K8S_NAMESPACE }}
+          manifests: |
+            deployment.yaml
+            service.yaml
+        env:
+          K8S_NAMESPACE: ${{ env.K8S_NAMESPACE }}
