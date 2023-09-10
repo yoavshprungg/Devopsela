@@ -22,7 +22,6 @@ pipeline {
                             echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
                             docker build -t yoavshprung/today:latest .
                             docker push yoavshprung/today:latest
-                            docker logout
                             """
                         }
                     }
