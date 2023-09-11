@@ -36,15 +36,13 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    sh "sudo docker run -d --name myapp-test -p 5000:5000 yoavshprung/today:${dockerImageTag}"
+                    sh "sudo docker run -d --name myapp-test -p 5000:5000 ${dockerImageTag}"
                     sleep 10
-                    def responseCode = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5000", returnStatus: true)
-
                     if (responseCode != 200) {
                         error("Application test failed with response code ${responseCode}")
                     }
-                    sh "sudo docker stop myapp-test"
-                    sh "sudo docker rm myapp-test"
+                    sh sudo "docker stop myapp-test"
+                    sh sudo "docker rm myapp-test"
                 }
             }
         }
@@ -58,4 +56,3 @@ pipeline {
         }
     }
 }
-
