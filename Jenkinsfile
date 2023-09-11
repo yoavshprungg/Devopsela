@@ -1,15 +1,15 @@
 pipeline {
     agent any
     stages {
-        stage('Git Clone') {
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
-            }
-        }
-
         stage('Clean Up') {
             steps {
                 deleteDir()
+            }
+        }
+
+        stage('Git Clone') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
             }
         }
 
@@ -17,12 +17,10 @@ pipeline {
             steps {
                 dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
                     script {
-                        // withCredentials([usernamePassword(credentialsId: 'b02aac4f-a3b2-4c78-bcca-186675d3b9df', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh """
                         sudo docker build -t yoavshprung/today:latest .
                         sudo docker push yoavshprung/today:latest
                         """
-                        // }
                     }
                 }
             }
