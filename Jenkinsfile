@@ -19,7 +19,7 @@ pipeline {
                     script {
                         withCredentials([usernamePassword(credentialsId: 'b02aac4f-a3b2-4c78-bcca-186675d3b9df', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             sh """
-                            echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
+                            echo "$pipeline" | docker login -u yoavshprung --password-stdin
                             docker build -t yoavshprung/today:latest .
                             docker push yoavshprung/today:latest
                             """
