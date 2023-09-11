@@ -4,7 +4,6 @@ pipeline {
         dockerImageTag = "1.${env.BUILD_NUMBER}"
     }
     triggers {
-        // Checking for commits on GitHub every hour 
         pollSCM('H * * * *')
     }
     stages {
@@ -42,8 +41,8 @@ pipeline {
                     if (responseCode != 200) {
                         error("Application test failed with response code ${responseCode}")
                     }
-                    sh "docker stop myapp-test"
-                    sh "docker rm myapp-test"
+                    sh sudo "docker stop myapp-test"
+                    sh sudo "docker rm myapp-test"
                 }
             }
         }
