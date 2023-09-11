@@ -1,6 +1,12 @@
 pipeline {
     agent any
     stages {
+            stage('Git Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
+            }
+        }
+        
         stage('Clean Up') {
             steps {
                 deleteDir()
@@ -9,7 +15,7 @@ pipeline {
 
         stage('Git Clone') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
+                git clone https://github.com/yoavshprungg/Devopsela.git
             }
         }
 
