@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        dockerImageTag = "1.${env.BUILD_NUMBER}"
+        dockerImageTag = "yoavshprung/today:latest"
     }
     triggers {
         pollSCM('H * * * *')
@@ -25,8 +25,8 @@ pipeline {
                 dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
                     script {
                         sh """
-                        sudo docker build -t yoavshprung/today:${dockerImageTag} .
-                        sudo docker push yoavshprung/today:${dockerImageTag}
+                        sudo docker build -t ${dockerImageTag} .
+                        sudo docker push ${dockerImageTag}
                         """
                     }
                 }
@@ -41,8 +41,8 @@ pipeline {
                     if (responseCode != 200) {
                         error("Application test failed with response code ${responseCode}")
                     }
-                    sh sudo "docker stop myapp-test"
-                    sh sudo "docker rm myapp-test"
+                    sh "sudo docker stop myapp-test"
+                    sh "sudo docker rm myapp-test"
                 }
             }
         }
