@@ -7,35 +7,24 @@ pipeline {
         pollSCM('H * * * *')
     }
     stages {
-        
         stage('Clean Up') {
             steps {
                 deleteDir()
             }
         }
-
+        
         stage('Git Clone') {
             steps {
                 sh "git clone 'https://github.com/yoavshprungg/Devopsela.git'"
             }
         }
 
-        stage('Build') {
-            steps {
-                dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
-                    script {
-                        sh """
-                        sudo docker build -t ${dockerImageTag} .
-                        sudo docker push ${dockerImageTag}
-                        """
-                    }
-                }
-            }
-        }
-
         stage('Test') {
             steps {
                 script {
+                    sh "sudo docker stop myapp-test || true"
+                    sh "sudo docker rm myapp-test || true"
+                    
                     sh "sudo docker run -d --name myapp-test -p 5000:5000 ${dockerImageTag}"
                     sleep 10
                     if (responseCode != 200) {
