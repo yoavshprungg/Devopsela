@@ -32,10 +32,8 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    def dockerImageTag = 'yoavshprung/today:latest'
                     sh "docker run -d --name myapp-test -p 5000:5000 ${dockerImageTag}"
                     sleep 10
-                    def responseCode = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://localhost:5000', returnStatus: true)
                     if (responseCode != 200) {
                         error("Application test failed with response code ${responseCode}")
                     }
