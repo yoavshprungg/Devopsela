@@ -8,11 +8,6 @@ pipeline {
         pollSCM('H * * * *')
     }
     stages {
-            stage('Git Checkout') {
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/yoavshprungg/Devopsela.git']]])
-            }
-        }
         
         stage('Clean Up') {
             steps {
@@ -56,7 +51,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh "kubectl apply -f deployment.yaml -f service.yaml -n dolphine_kubernetes"
+                    sh "kubectl apply -f kubernetes/deployment.yaml -f kubernetes/service.yaml -n dolphine_kubernetes"
                 }
             }
         }
