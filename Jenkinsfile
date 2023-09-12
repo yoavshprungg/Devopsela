@@ -38,12 +38,14 @@ pipeline {
             steps {
                 script {
                     sh "sudo docker run -d --name myapp-test -p 5000:5000 ${dockerImageRepo}:${dockerImageTag}"
-                    sleep 10
+                    sh "sleep 10"
                     if (responseCode != 200) {
                         error("Application test failed with response code ${responseCode}")
+                    } else {
+                        echo "Application test succeeded with response code 200"
                     }
-                   
-                    sh "sudo docker stop myapp-test" 
+        
+                    sh "sudo docker stop myapp-test"
                     sh "sudo docker rm myapp-test"
                     sh "sudo docker container prune -f"
                 }
