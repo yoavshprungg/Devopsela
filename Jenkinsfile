@@ -51,8 +51,10 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                script {
-                    sh "kubectl apply -f kubernetes/deployment.yaml -f kubernetes/service.yaml -n dolphine_kubernetes"
+                dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
+                    script {
+                        sh "kubectl apply -f kubernetes/deployment.yaml -f kubernetes/service.yaml -n dolphine_kubernetes"
+                    }
                 }
             }
         }
