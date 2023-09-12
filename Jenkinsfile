@@ -42,7 +42,9 @@ pipeline {
                     if (responseCode != 200) {
                         error("Application test failed with response code ${responseCode}")
                     }
-                    sh "sudo docker stop myapp-test"
+                   
+                    sh "sudo docker stop myapp-test" 
+                    sh "sudo docker rm myapp-test"
                     sh "sudo docker container prune -f"
                 }
             }
