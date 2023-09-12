@@ -38,8 +38,16 @@ pipeline {
             steps {
                 dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
                     script {
-                        sh "sudo docker stop myapp-test"
-                        sh "sudo docker rm myapp-test"
+                        sh """
+                        if sudo docker ps -a --format '{{.Names}}' | grep -q '^myapp-test$'; then
+                            # If it exists, stop and remove it
+                            sudo docker stop myapp-test
+                            sudo docker rm myapp-test
+                        else
+                            # If it doesn't exist, print a message and skip
+                            echo "The 'myapp-test' container does not exist, so there's nothing to stop or remove."
+                        fi
+                        """
                         sh "sudo docker run -d --name myapp-test -p 5000:5000 ${dockerImageRepo}:${dockerImageTag}"
                         sh "sleep 10"
                         sh "sudo chmod u+x tests.sh"
