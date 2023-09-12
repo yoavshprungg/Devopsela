@@ -36,14 +36,16 @@ pipeline {
 
         stage('Test') {
             steps {
-                script {
-                    sh "sudo docker run -d --name myapp-test -p 5000:5000 ${dockerImageRepo}:${dockerImageTag}"
-                    sh "sleep 10"
-                    sh "sudo chmod u+x tests.sh"
-                    sh "./tests.sh"
-                    sh "sudo docker stop myapp-test"
-                    sh "sudo docker rm myapp-test"
-                    sh "sudo docker container prune -f"
+                dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
+                    script {
+                        sh "sudo docker run -d --name myapp-test -p 5000:5000 ${dockerImageRepo}:${dockerImageTag}"
+                        sh "sleep 10"
+                        sh "sudo chmod u+x tests.sh"
+                        sh "./tests.sh"
+                        sh "sudo docker stop myapp-test"
+                        sh "sudo docker rm myapp-test"
+                        sh "sudo docker container prune -f"
+                    }
                 }
             }
         }
