@@ -44,7 +44,6 @@ pipeline {
                         sh "./tests.sh"
                         sh "sudo docker stop myapp-test"
                         sh "sudo docker rm myapp-test"
-                        sh "sudo docker container prune -f"
                     }
                 }
             }
