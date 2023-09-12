@@ -54,6 +54,7 @@ pipeline {
                 dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
                     script {
                         sh "kubectl apply -f kubernetes/deployment.yaml -f kubernetes/service.yaml"
+                        sh "kubectl rollout restart deployment.apps/web"
                     }
                 }
             }
