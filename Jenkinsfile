@@ -38,7 +38,6 @@ pipeline {
             steps {
                 dir('/var/lib/jenkins/workspace/yoavyo/Devopsela') {
                     script {
-                        sh "sudo docker container prune -f"
                         sh "sudo docker run -d --name myapp-test -p 5000:5000 ${dockerImageRepo}:${dockerImageTag}"
                         sh "sleep 10"
                         sh "sudo chmod u+x tests.sh"
